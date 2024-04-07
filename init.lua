@@ -1,5 +1,5 @@
 local vim = vim -- You need to define vim before using it
-vim.cmd [[colorscheme default]]
+vim.cmd [[colorscheme habamax]]
 -- disable netrw at the very start of your init.lua
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -16,6 +16,7 @@ vim.wo.number = true
 
 vim.opt.tabstop = 4
 vim.g.mapleader = ' '
+vim.opt.pumheight = 10
 
 
 -- Plug configuration
@@ -23,8 +24,11 @@ local Plug = vim.fn['plug#']
 vim.call('plug#begin')
 
 -- autocompletion
-Plug('neoclide/coc.nvim', { branch = 'release' })
-vim.opt.pumheight = 10
+Plug('neovim/nvim-lspconfig')
+Plug('hrsh7th/nvim-cmp')
+Plug('hrsh7th/cmp-nvim-lsp')
+Plug('L3MON4D3/LuaSnip')
+Plug('VonHeikemen/lsp-zero.nvim', { branch = 'v3.x' })
 Plug('nvim-tree/nvim-tree.lua')
 Plug('nvim-treesitter/nvim-treesitter')
 local opts = {silent = true, noremap = true, expr = true, replace_keycodes = false}
@@ -42,13 +46,8 @@ end
 
 require("nvim-tree").setup()
 require("nvim-treesitter.configs").setup({highlight={enable=true, disable=turn_on_only_on_specific_files}})
+
 -- KEY BINDINGS
--- If autocompletion menu is visible, pressing Down will go to the next completion option 
-vim.keymap.set("i", "<Down>", "coc#pum#visible() ? coc#pum#next(1) : '<Down>'", opts)
--- If autocompletion menu is visible, pressing Up will go to the previous completion option 
-vim.keymap.set("i", "<Up>", "coc#pum#visible() ? coc#pum#prev(1) : '<Up>'", opts)
--- If autocompletion menu is visible, pressing Enter will insert the completion
-vim.keymap.set("i", "<CR>", "coc#pum#visible() ? coc#_select_confirm() : '<CR>'", opts)
 -- Open/close file explorer
 vim.keymap.set('n', '<leader>f', "':NvimTreeToggle<CR>'", opts)
 -- Horizontal split 
@@ -92,7 +91,64 @@ vim.keymap.set('n', 'p', "'kp'", opts)
 
 -- C/C++ helpers
 local generate_main = function()
-			vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n//main body\n\b}')
+			vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n \n\b}')
 		      end
 
 vim.keymap.set('n', '<leader>main', generate_main, opts)
+
+
+-- LSP
+local lsp_zero = require('lsp-zero')
+
+lsp_zero.on_attach(function(client, bufnr)
+  -- see :help lsp-zero-keybindings
+  -- to learn the available actions
+  lsp_zero.default_keymaps({buffer = bufnr})
+end)
+
+local cmp = require('cmp')
+local cmp_select = {behavior = cmp.SelectBehavior.Select}
+cmp.setup({
+  mapping = {
+    ['<Up>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<Down>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<S-Space>'] = cmp.mapping.complete(),
+  }
+})
+
+require('lspconfig').clangd.setup({})
+-- Global mappings for completion
+-- after the language server attaches to the current buffer
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+  callback = function(ev)
+    -- Enable completion triggered by <c-x><c-o>
+    vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+    -- Buffer local mappings.
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    local opts = { buffer = ev.buf }
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+    vim.keymap.set('n', 'S', vim.lsp.buf.signature_help, opts)
+    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+    vim.keymap.set('n', 'D', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', '<space>wl', function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, opts)
+    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
+    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
+    vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+    vim.keymap.set('n', '<space>f', function()
+      vim.lsp.buf.format { async = true }
+    end, opts)
+  end,
+})
+
+
+

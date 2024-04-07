@@ -8,12 +8,13 @@ vim.g.loaded_netrwPlugin = 1
 vim.opt.termguicolors = true
 
 -- Set tab to 4 spaces
+vim.cmd [[set expandtab]]
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.wo.number = true
-vim.cmd[[set expandtab]]
 
+vim.opt.tabstop = 4
 vim.g.mapleader = ' '
 
 
@@ -54,20 +55,10 @@ vim.keymap.set('n', '<leader>f', "':NvimTreeToggle<CR>'", opts)
 vim.keymap.set('n', '<leader>hs', "':sp<CR>'", opts)
 -- Vertical split
 vim.keymap.set('n', '<leader>vs', "':vs<CR>'", opts)
--- Write and quit
-vim.keymap.set('n', '<leader><S-w>', "':wq<CR>'", opts)
--- Write
-vim.keymap.set('n', '<leader>w', "':w<CR>'", opts)
--- Quit 
-vim.keymap.set('n', '<leader>q', "':q<CR>'", opts)
--- Force quit
-vim.keymap.set('n', '<leader><S-q>', "':q!<CR>'", opts)
 -- Append to the beginning of the next line
 vim.keymap.set('n', 'a', "'A<CR>'", opts)
 -- Open this config file
 vim.keymap.set('n', '<leader>conf', "':edit ~/.config/nvim/init.lua<CR>'", opts)
--- Source this config file
-vim.keymap.set('n', '<leader>src', "':source<CR>'", opts)
 -- Go to EOF
 vim.keymap.set('n', '<leader>eof', "'GA<CR>'", opts)
 -- Open terminal
@@ -92,6 +83,13 @@ vim.keymap.set('n', '<Down>', do_nothing, opts)
 
 -- Copy entire file to clipboard
 vim.keymap.set('n', '<leader>cp', "':%y+<CR>'", opts)
+
+-- Copy current line to clipboard
+vim.keymap.set('n', 'cp', "'yy+'", opts)
+
+-- Paste to current line
+vim.keymap.set('n', 'p', "'kp'", opts)
+
 -- C/C++ helpers
 local generate_main = function()
 			vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n//main body\n\b}')

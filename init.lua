@@ -75,16 +75,25 @@ vim.keymap.set('n', '<leader>term', "':edit term://zsh<CR>:set nonumber<CR>aclea
 vim.keymap.set('t', '<Esc>', "'<C-\\><C-n>'", opts)
 -- Change window
 vim.keymap.set('n', '<Tab>', "'<C-w>w'", opts) 
--- Switch j with k
-vim.keymap.set('n', 'j', "'k'", opts)
-vim.keymap.set('n', 'k', "'j'", opts)
+-- Left: K, Right: L, Up: O, Down: M
+vim.keymap.set('n', 'm', "'j'", opts)
+vim.keymap.set('n', 'o', "'k'", opts)
+vim.keymap.set('n', 'k', "'h'", opts)
 -- Add blank line below this line without moving the cursor
 vim.keymap.set('n', '<leader>-<CR>', "'A<CR><Esc>j'", opts)
 
+-- Disable arrows in normal mode
+local do_nothing = function() end
+vim.keymap.set('n', '<Left>', do_nothing, opts)
+vim.keymap.set('n', '<Right>', do_nothing, opts)
+vim.keymap.set('n', '<Up>', do_nothing, opts)
+vim.keymap.set('n', '<Down>', do_nothing, opts)
 
+-- Copy entire file to clipboard
+vim.keymap.set('n', '<leader>cp', "':%y+<CR>'", opts)
 -- C/C++ helpers
 local generate_main = function()
-		          vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n//main body\n\b}')
-		      end
+					    vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n//main body\n\b}')
+					  end
 
 vim.keymap.set('n', '<leader>main', generate_main, opts)

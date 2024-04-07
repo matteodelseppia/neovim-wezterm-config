@@ -20,7 +20,7 @@ config.colors = {
 
 img = "/Users/matteodelseppia/.wez_background.jpg"
 config.window_background_image = img
-config.window_background_opacity = 0.8
+config.window_background_opacity = 0.5
 config.macos_window_background_blur = 20
 -- and finally, return the configuration to wezterm
 return config

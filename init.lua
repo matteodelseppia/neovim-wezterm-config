@@ -70,7 +70,7 @@ vim.keymap.set('n', '<leader>src', "':source<CR>'", opts)
 -- Go to EOF
 vim.keymap.set('n', '<leader>eof', "'GA<CR>'", opts)
 -- Open terminal
-vim.keymap.set('n', '<leader>term', "':edit term://zsh<CR>'", opts)
+vim.keymap.set('n', '<leader>term', "':edit term://zsh<CR>:set nonumber<CR>aclear<CR>'", opts)
 -- Exit terminal mode
 vim.keymap.set('t', '<Esc>', "'<C-\\><C-n>'", opts)
 -- Change window

@@ -93,7 +93,7 @@ vim.keymap.set('n', '<Down>', do_nothing, opts)
 vim.keymap.set('n', '<leader>cp', "':%y+<CR>'", opts)
 -- C/C++ helpers
 local generate_main = function()
-					    vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n//main body\n\b}')
-					  end
+			vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n//main body\n\b}')
+		      end
 
 vim.keymap.set('n', '<leader>main', generate_main, opts)

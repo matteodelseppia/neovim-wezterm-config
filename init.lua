@@ -1,11 +1,11 @@
 local vim = vim -- You need to define vim before using it
-vim.cmd [[colorscheme habamax]]
+vim.cmd [[colorscheme default]]
 -- disable netrw at the very start of your init.lua
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 -- optionally enable 24-bit colour
-vim.opt.termguicolors = false
+vim.opt.termguicolors = true
 
 -- Set tab to 4 spaces
 vim.opt.tabstop = 4
@@ -70,14 +70,21 @@ vim.keymap.set('n', '<leader>src', "':source<CR>'", opts)
 -- Go to EOF
 vim.keymap.set('n', '<leader>eof', "'GA<CR>'", opts)
 -- Open terminal
-vim.keymap.set('n', '<leader>term', "':edit term://zsh<CR>:set nonumber<CR>aclear<CR>'", opts)
+vim.keymap.set('n', '<leader>term', "':edit term://zsh<CR>:set nonumber<CR>aclear<CR>'", opts) 
 -- Exit terminal mode
 vim.keymap.set('t', '<Esc>', "'<C-\\><C-n>'", opts)
 -- Change window
 vim.keymap.set('n', '<Tab>', "'<C-w>w'", opts) 
--- Add blank line
-vim.keymap.set('n', '<leader>-<CR>', "'A<CR><Esc>k'", opts)
 -- Switch j with k
 vim.keymap.set('n', 'j', "'k'", opts)
 vim.keymap.set('n', 'k', "'j'", opts)
+-- Add blank line below this line without moving the cursor
+vim.keymap.set('n', '<leader>-<CR>', "'A<CR><Esc>j'", opts)
 
+
+-- C/C++ helpers
+local generate_main = function()
+		          vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n//main body\n\b}')
+		      end
+
+vim.keymap.set('n', '<leader>main', generate_main, opts)

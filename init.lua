@@ -29,8 +29,10 @@ Plug('hrsh7th/nvim-cmp')
 Plug('hrsh7th/cmp-nvim-lsp')
 Plug('L3MON4D3/LuaSnip')
 Plug('VonHeikemen/lsp-zero.nvim', { branch = 'v3.x' })
-Plug('nvim-tree/nvim-tree.lua')
 Plug('nvim-treesitter/nvim-treesitter')
+Plug('nvim-lua/plenary.nvim')
+Plug('nvim-telescope/telescope.nvim', { tag = '0.1.6' })
+
 local opts = {silent = true, noremap = true, expr = true, replace_keycodes = false}
 
 -- If the autocompletion menu is open 
@@ -44,12 +46,17 @@ local turn_on_only_on_specific_files = function(lang)
 	return true
 end	
 
-require("nvim-tree").setup()
 require("nvim-treesitter.configs").setup({highlight={enable=true, disable=turn_on_only_on_specific_files}})
+local telescope = require('telescope.builtin')
 
 -- KEY BINDINGS
--- Open/close file explorer
-vim.keymap.set('n', '<leader>f', "':NvimTreeToggle<CR>'", opts)
+
+-- Telescope
+vim.keymap.set('n', '<leader>ff', telescope.find_files, {})
+vim.keymap.set('n', '<leader>fg', telescope.live_grep, {})
+vim.keymap.set('n', '<leader>fb', telescope.buffers, {})
+vim.keymap.set('n', '<leader>fh', telescope.help_tags, {})
+
 -- Horizontal split 
 vim.keymap.set('n', '<leader>hs', "':sp<CR>'", opts)
 -- Vertical split
@@ -72,6 +79,12 @@ vim.keymap.set('n', 'o', "'k'", opts)
 vim.keymap.set('n', 'k', "'h'", opts)
 -- Add blank line below this line without moving the cursor
 vim.keymap.set('n', '<leader>-<CR>', "'A<CR><Esc>j'", opts)
+-- Skip a paragraph up/down
+vim.keymap.set('n', 'ò', "'{'", opts)
+vim.keymap.set('n', 'à', "'}'", opts)
+-- Go to beginning/end of line
+vim.keymap.set('n', '!', "'$'", opts)
+vim.keymap.set('n', '|', "'0'", opts)
 
 -- Disable arrows in normal mode
 local do_nothing = function() end
@@ -91,8 +104,8 @@ vim.keymap.set('n', 'p', "'kp'", opts)
 
 -- C/C++ helpers
 local generate_main = function()
-			vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n \n\b}')
-		      end
+					    vim.fn.feedkeys('aint main(int argc, char** argv)\n{\n \n\b}')
+					  end
 
 vim.keymap.set('n', '<leader>main', generate_main, opts)
 
@@ -118,6 +131,8 @@ cmp.setup({
 })
 
 require('lspconfig').clangd.setup({})
+require('lspconfig').cmake.setup({})
+
 -- Global mappings for completion
 -- after the language server attaches to the current buffer
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -149,6 +164,3 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end, opts)
   end,
 })
-
-
-
